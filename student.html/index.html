@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Academia Flow | Student Management Portal</title>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="style.css">
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
+<body>
+
+  <div class="dashboard-container">
+    
+    <!-- Top Header -->
+    <header>
+      <div class="brand">
+        <div class="brand-icon">
+          <i class="fa-solid fa-graduation-cap"></i>
+        </div>
+        <h1 class="brand-title">Academia Flow</h1>
+      </div>
+      <div class="user-profile">
+        <div id="current-date" class="date-badge">
+          <i class="fa-regular fa-calendar"></i>
+          <span id="date-display">Loading Date...</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- KPI Analytics Cards -->
+    <div class="stats-grid">
+      <!-- Card 1: Total Students -->
+      <div class="glass-card stat-card" style="--card-accent: var(--primary);">
+        <div class="stat-info">
+          <span class="stat-label">Total Students</span>
+          <span id="stat-total-students" class="stat-value">0</span>
+          <span class="stat-desc">Enrolled in portal</span>
+        </div>
+        <div class="stat-icon">
+          <i class="fa-solid fa-users"></i>
+        </div>
+      </div>
+      
+      <!-- Card 2: Average GPA -->
+      <div class="glass-card stat-card" style="--card-accent: var(--accent-teal);">
+        <div class="stat-info">
+          <span class="stat-label">Average GPA</span>
+          <span id="stat-average-gpa" class="stat-value">0.00</span>
+          <span class="stat-desc">Out of 4.00 limit</span>
+        </div>
+        <div class="stat-icon">
+          <i class="fa-solid fa-chart-line"></i>
+        </div>
+      </div>
+
+      <!-- Card 3: Active Status Rate -->
+      <div class="glass-card stat-card" style="--card-accent: var(--accent-emerald);">
+        <div class="stat-info">
+          <span class="stat-label">Active Rate</span>
+          <span id="stat-active-rate" class="stat-value">0%</span>
+          <span class="stat-desc">Good academic standing</span>
+        </div>
+        <div class="stat-icon">
+          <i class="fa-solid fa-user-check"></i>
+        </div>
+      </div>
+
+      <!-- Card 4: Top Course -->
+      <div class="glass-card stat-card" style="--card-accent: var(--accent-amber);">
+        <div class="stat-info">
+          <span class="stat-label">Popular Course</span>
+          <span id="stat-popular-course" class="stat-value">N/A</span>
+          <span class="stat-desc">Highest student count</span>
+        </div>
+        <div class="stat-icon">
+          <i class="fa-solid fa-book-bookmark"></i>
+        </div>
+      </div>
+    </div>
+
+    <!-- Controls Panel: Filter & Action -->
+    <div class="glass-card control-bar">
+      <div class="filters-wrapper">
+        <div class="search-box">
+          <i class="fa-solid fa-magnifying-glass"></i>
+          <input type="text" id="search-input" class="search-input" placeholder="Search by name, ID or email...">
+        </div>
+        
+        <select id="filter-course" class="select-filter">
+          <option value="all">All Courses</option>
+          <option value="Computer Science">Computer Science</option>
+          <option value="Electrical Engineering">Electrical Engineering</option>
+          <option value="Mechanical Engineering">Mechanical Engineering</option>
+          <option value="Data Science">Data Science</option>
+          <option value="Business Administration">Business Administration</option>
+        </select>
+
+        <select id="filter-status" class="select-filter">
+          <option value="all">All Statuses</option>
+          <option value="Active">Active</option>
+          <option value="Probation">Probation</option>
+          <option value="Suspended">Suspended</option>
+        </select>
+      </div>
+
+      <button id="btn-add-student" class="btn-add">
+        <i class="fa-solid fa-plus"></i>
+        <span>Add Student</span>
+      </button>
+    </div>
+
+    <!-- Student Data Table Container -->
+    <div class="glass-card table-container">
+      <table>
+        <thead>
+          <tr>
+            <th>Student</th>
+            <th>ID</th>
+            <th>Course</th>
+            <th>GPA</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="student-table-body">
+          <!-- Rows will be injected by JavaScript -->
+        </tbody>
+      </table>
+      
+      <!-- Empty State View -->
+      <div id="table-empty-state" class="empty-state" style="display: none;">
+        <div class="empty-icon">
+          <i class="fa-regular fa-folder-open"></i>
+        </div>
+        <span class="empty-text">No students found</span>
+        <span class="empty-subtext">Try refining your search terms or filters, or add a new student record to get started.</span>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Add / Edit Student Modal Dialog -->
+  <div id="student-modal" class="modal-overlay">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 id="modal-title" class="modal-title">Add Student Record</h3>
+        <button id="modal-btn-close" class="btn-close">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form id="student-form" novalidate>
+          <input type="hidden" id="student-form-index" value="">
+          
+          <div class="form-grid">
+            
+            <!-- Full Name -->
+            <div class="form-group full-width">
+              <label for="student-name">Full Name</label>
+              <input type="text" id="student-name" class="form-input" placeholder="e.g., Sravani Punju" required>
+            </div>
+
+            <!-- Email Address -->
+            <div class="form-group full-width">
+              <label for="student-email">Email Address</label>
+              <input type="email" id="student-email" class="form-input" placeholder="e.g., sravani@college.edu" required>
+            </div>
+
+            <!-- Student ID Code -->
+            <div class="form-group">
+              <label for="student-id-code">Student ID</label>
+              <input type="text" id="student-id-code" class="form-input" placeholder="e.g., STU-202601" required>
+            </div>
+
+            <!-- GPA Score -->
+            <div class="form-group">
+              <label for="student-gpa">GPA Score (0.0 - 4.0)</label>
+              <input type="number" id="student-gpa" class="form-input" step="0.01" min="0" max="4" placeholder="e.g., 3.85" required>
+            </div>
+
+            <!-- Academic Course Select -->
+            <div class="form-group">
+              <label for="student-course">Course Program</label>
+              <select id="student-course" class="form-input" style="appearance: none; background-image: url('data:image/svg%2Bxml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 fill=%22none%22 viewBox=%220 0 24 24%22 stroke=%22%2394a3b8%22%3E%3Cpath stroke-linecap=%22round%22 stroke-linejoin=%22round%22 stroke-width=%222%22 d=%22M19 9l-7 7-7-7%22/%3E%3C/svg%3E'); background-repeat: no-repeat; background-position: right 0.75rem center; background-size: 1rem;" required>
+                <option value="" disabled selected>Select course...</option>
+                <option value="Computer Science">Computer Science</option>
+                <option value="Electrical Engineering">Electrical Engineering</option>
+                <option value="Mechanical Engineering">Mechanical Engineering</option>
+                <option value="Data Science">Data Science</option>
+                <option value="Business Administration">Business Administration</option>
+              </select>
+            </div>
+
+            <!-- Status Choice -->
+            <div class="form-group">
+              <label for="student-status">Academic Standing</label>
+              <select id="student-status" class="form-input" style="appearance: none; background-image: url('data:image/svg%2Bxml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 fill=%22none%22 viewBox=%220 0 24 24%22 stroke=%22%2394a3b8%22%3E%3Cpath stroke-linecap=%22round%22 stroke-linejoin=%22round%22 stroke-width=%222%22 d=%22M19 9l-7 7-7-7%22/%3E%3C/svg%3E'); background-repeat: no-repeat; background-position: right 0.75rem center; background-size: 1rem;" required>
+                <option value="Active">Active</option>
+                <option value="Probation">Probation</option>
+                <option value="Suspended">Suspended</option>
+              </select>
+            </div>
+
+          </div>
+
+          <div class="form-actions">
+            <button type="button" id="modal-btn-cancel" class="btn-secondary">Cancel</button>
+            <button type="submit" id="modal-btn-save" class="btn-add">Save Record</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Feedbacks Container -->
+  <div id="toast-container" class="toast-container"></div>
+
+  <!-- JavaScript Implementation -->
+  <script src="app.js"></script>
+</body>
+</html>
